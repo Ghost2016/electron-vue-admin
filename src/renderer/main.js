@@ -12,6 +12,8 @@ import store from './store'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+// import '../sentry' // sentry control
+import '../../record-example/HZRecorder' // sentry control
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 

@@ -69,6 +69,14 @@ function startRenderer () {
           ctx.middleware.waitUntilValid(() => {
             resolve()
           })
+        },
+        proxy: {
+          '/version_1': {
+            target: 'http://api021.daxiangxiaoyuan.com',
+            pathRewrite: {'^/version_1' : ''},
+            secure: false,
+            changeOrigin: true,
+          }
         }
       }
     )

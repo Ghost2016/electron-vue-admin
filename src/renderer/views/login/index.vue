@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
-      <h3 class="title">vue-element-admin</h3>
+      <h3 class="title">职么开门</h3>
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
@@ -18,26 +18,34 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">
-          Sign in
+          登陆
         </el-button>
       </el-form-item>
-      <div class="tips">
+      <!-- <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
         <span> password: admin</span>
-      </div>
+      </div> -->
     </el-form>
   </div>
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
-
+import '../../utils/im/index.js'
+// import '../../utils/im/info.js'
+import { webimLogin } from '../../utils/im/login.js'
+// webimLogin()
+// console.log(webim) // eslint-disable-lint
+// console.log(loginInfo)
+import { isValidatePhoneNumber } from '@/utils/validate'
+// import { logErrorRemotely } from '../../utils/logging.js'
+import { getUserSig } from '@/api_im/login'
+// getUserSig().then(res =>{console.log(res)}).catch(e=>{})
 export default {
   name: 'login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
+      if (!isValidatePhoneNumber(value)) {
+        callback(new Error('请输入正确的手机号'))
       } else {
         callback()
       }
@@ -51,8 +59,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        username: '13668170173',
+        password: 'ly123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -71,21 +79,44 @@ export default {
       }
     },
     handleLogin() {
+      // test().then(res => {
+      //   console.log(res)
+      //   // logErrorRemotely(new Error('API'))
+      // }).catch(
+      //   e => {
+      //     console.log(e)
+      //   }
+      // )
+      // this.record()
+      const that = this;
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then(() => {
-            this.loading = false
-            this.$router.push({ path: '/' })
-          }).catch(() => {
-            this.loading = false
+          that.loading = true
+          that.$store.dispatch('Login', that.loginForm).then(() => {
+            that.loading = false
+            that.$router.push({ path: '/record' })
+          }).catch((e) => {
+            that.loading = false
           })
         } else {
           console.log('error submit!!')
           return false
         }
       })
+    },
+    record() {
+      window.navigator.mediaDevices.getUserMedia({
+        audio: {
+          sampleRate: 44100, // 采样率
+          channelCount: 2, // 声道
+          volume: 1.0 // 音量
+        }
+      }).then(mediaStream => {
+        console.log(mediaStream)
+      })
     }
+  },
+  created() {
   }
 }
 </script>

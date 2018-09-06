@@ -1,4 +1,6 @@
 import { login, logout, getInfo } from '@/api/login'
+import { getUserSig } from '@/api_im/login'
+import { webimLogin } from '../../utils/im/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -6,12 +8,17 @@ const user = {
     token: getToken(),
     name: '',
     avatar: '',
-    roles: []
+    roles: [],
+    id: 0,
+    sig: ''
   },
 
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
+    },
+    SET_ID: (state, id) => {
+      state.id = id
     },
     SET_NAME: (state, name) => {
       state.name = name
@@ -21,6 +28,9 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_SIG: (state, sig) => {
+      state.sig = sig
     }
   },
 
@@ -29,12 +39,20 @@ const user = {
     Login({ commit }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
-          const data = response.data
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
-          resolve()
+        // 先登陆自己平台
+        login(username, userInfo.password).then(info => {
+          commit('SET_ID', info.id)
+          return getUserSig(info.id).then(sigRes => {
+            commit('SET_SIG', sigRes)
+            return webimLogin().then(webimInfo => {
+              console.log(webimInfo)
+              setToken(info.token)
+              commit('SET_TOKEN', info.token)
+              resolve()
+            })
+          })
         }).catch(error => {
+          console.error(error)
           reject(error)
         })
       })

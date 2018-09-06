@@ -2,11 +2,12 @@ import request from '@/utils/request'
 
 export function login(username, password) {
   return request({
-    url: '/user/login',
+    url: '/api/sd/v1/auth/login/',
     method: 'post',
     data: {
-      username,
-      password
+      phone: username || '13668170173',
+      password: password || 'ly123456',
+      type: 'phone'
     }
   })
 }
@@ -25,3 +26,4 @@ export function logout() {
     method: 'post'
   })
 }
+

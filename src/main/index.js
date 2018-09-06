@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron'
-
+// const { init } = require('@sentry/electron')
+// const config = require('../config')
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -13,6 +14,8 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
+// console.log(require('path').join(__dirname, 'sentry.js'))
+
 function createWindow() {
   /**
    * Initial window options
@@ -20,9 +23,22 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    webPreferences: {
+      webSecurity: false
+      // nodeIntegration: true
+      // preload: '../sentry.js'
+      // preload: require('path').join(__dirname, 'sentry.js')
+    }
   })
-
+  // console.log('init sentry main')
+  // if (process.env.NODE_ENV !== 'development') {
+  //   init({
+  //     // 此处需要配置sentrykey'
+  //     dsn: config.sentryKey,
+  //     allowSecretKey: process.env.NODE_ENV !== 'development'
+  //   })
+  // }
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
